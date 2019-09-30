@@ -13,8 +13,6 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
-		"no-var": 0,//禁用var，用let和const代替
-		"no-const-assign": 2,//禁止修改const声明的变量
 		"no-alert": 0,//禁止使用alert confirm prompt
 		"no-else-return": 2,//如果if语句里面有return,后面不能跟else语句
 		"no-eq-null": 2,//禁止对null使用==或!=运算符
@@ -27,7 +25,7 @@ module.exports = {
 		"linebreak-style": [0, "windows"],//换行风格
 		"no-multi-spaces": 1,//不能用多余的空格
 		"no-multiple-empty-lines": [1, {"max": 2}],//空行最多不能超过2行
-		"no-undef": 1,//不能有未定义的变量
+		"no-undef": 0,//不能有未定义的变量
 		"no-undef-init": 2,//变量初始化时不能直接给它赋值为undefined
 		"no-throw-literal": 2,//禁止抛出字面量错误 throw "error";
 		"no-trailing-spaces": 1,//一行结束后面不要有空格
