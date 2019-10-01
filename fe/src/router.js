@@ -1,8 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
 
 Vue.use(Router)
+
+// 解决VUE element导航栏重复点击路由报错----NavigationDuplicated {_name: "NavigationDuplicated", name: "NavigationDuplicated"}
+const originalPush = Router.prototype.push
+Router.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 export default new Router({
   mode: 'history',
@@ -10,16 +15,27 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      redirect: '/project'
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      path: '/project',
+      name: 'project',
+      component: () => import('./views/project')
+    },
+    {
+      path: '/mould/:id',
+      name: 'mould',
+      component: () => import('./views/mould')
+    },
+    {
+      path: '/record/:id',
+      name: 'record',
+      component: () => import('./views/record')
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: () => import('./views/user')
     }
   ]
 })

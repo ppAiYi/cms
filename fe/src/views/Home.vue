@@ -23,18 +23,14 @@ export default {
     const rd = Math.floor(Math.random() * 100)
     this.$axios.post('/project/add', {
       name: `abc菜鸟测试${rd}`,
-      desc: `我是描述测试数据${rd}`,
+      description: `我是描述测试数据${rd}`,
       uids: '1,2,3'
     }).then(res => {
       console.log(res)
     }).catch(err => {
       console.log(err)
     })
-    this.$axios.get('/project?uid=1').then(res => {
-      console.log(res)
-    }).catch(err => {
-      console.log(err)
-    })
+    
     this.$axios.get('/mould').then(res => {
       console.log(res)
     }).catch(err => {

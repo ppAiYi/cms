@@ -7,5 +7,6 @@ module.exports = {
   port: '3306',
   user: 'root',
   password: 'root',
-  database: 'cms'
+  database: 'cms',
+  timezone: '08:00' // 解决从数据库datetime类型取数据是 2019-09-30T12:53:51.000Z 问题
 }
