@@ -57,7 +57,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button @click="addKey">新增域名</el-button>
+        <el-button @click="addKey">新增字段名</el-button>
         <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
