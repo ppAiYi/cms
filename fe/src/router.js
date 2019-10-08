@@ -33,6 +33,11 @@ export default new Router({
       component: () => import('./views/record')
     },
     {
+      path: '/record-data/:id/:rid/:mid',
+      name: 'record-data',
+      component: () => import('./views/record-data')
+    },
+    {
       path: '/user',
       name: 'user',
       component: () => import('./views/user')

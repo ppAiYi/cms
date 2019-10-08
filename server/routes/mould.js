@@ -15,6 +15,18 @@ router.get('/', function(req, res) {
   })
 })
 
+router.get('/item', function(req, res) {
+  var reqData = req.query
+  dbMould.mouldSelectById(reqData.id, function(result) {
+    var data = {
+      code: 0,
+      data: result,
+      msg: '请求成功'
+    }
+    res.json(data)
+  })
+})
+
 router.post('/add', function(req, res) {
   var reqData = req.body
   var currentTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')

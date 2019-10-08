@@ -1,7 +1,7 @@
 <template>
   <el-container class="record">
     <el-header>
-      <h1>模板管理页</h1>
+      <h1>模板组合页</h1>
     </el-header>
     <el-main>
       <el-button class="record-add" @click="add" type="primary">新增</el-button>
@@ -9,22 +9,23 @@
         <el-table-column fixed prop="id" label="项目id" width="100"></el-table-column>
         <el-table-column prop="name" label="项目名称" width="280"></el-table-column>
         <el-table-column prop="description" label="项目描述" width="250"></el-table-column>
-        <el-table-column prop="uids" label="参与人员" width="200"></el-table-column>
+        <el-table-column prop="mid" label="模板类型" width="250"></el-table-column>
+        <el-table-column prop="uri" label="访问路径" width="250"></el-table-column>
+        <el-table-column prop="uid" label="创建人员" width="200"></el-table-column>
         <el-table-column label="更新时间" width="180">
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
             <span style="margin-left: 10px">{{ scope.row.utime }}</span>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="300">
+        <el-table-column fixed="right" label="操作" width="210">
           <template slot-scope="scope">
             <el-button @click.native.prevent="eidtRow(scope.$index, scope.row)" size="mini">编辑</el-button>
-            <el-button @click.native.prevent="recordRow(scope.$index, scope.row)" size="mini">模板</el-button>
             <el-button
               @click.native.prevent="manageRow(scope.$index, scope.row)"
               size="mini"
               type="primary"
-            >管理</el-button>
+            >数据</el-button>
             <el-button
               @click.native.prevent="deleteRow(scope.$index, scope.row)"
               size="mini"
@@ -43,8 +44,18 @@
         <el-form-item label="项目描述" :label-width="formLabelWidth">
           <el-input v-model="form.description" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="参与人员" :label-width="formLabelWidth">
-          <el-input v-model="form.uids" autocomplete="off"></el-input>
+        <el-form-item label="模板类型" :label-width="formLabelWidth">
+          <el-select v-model="form.mid" placeholder="请选择类型">
+            <el-option
+              v-for="item in selected"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="访问路径" :label-width="formLabelWidth">
+          <el-input v-model="form.uri" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -79,16 +90,19 @@
 export default {
   data () {
     return {
+      uid: 1,
       pid: '',
       dialogTitle: '', // 弹窗标题
       dialogFormVisible: false, // 弹窗显示隐藏
       formLabelWidth: '120px', // 弹窗内部表达宽度
       record: [],
+      selected: [],
       form: {
         id: '',
         name: '',
         description: '',
-        uids: ''
+        mid: '',
+        uri: ''
       },
       activeIndex: '', // 现在操作的行数
       operateType: '' // 操作类型 add新增 edit修改
@@ -97,6 +111,18 @@ export default {
   created () {
     const pid = this.$route.params.id
     this.pid = pid
+    this.$axios.get(`/mould?pid=${pid}`).then(res => {
+      const result = res.data || {}
+      if (result.code === 0) {
+        this.selected = result.data || []
+      } else {
+        this.$message.error('数据异常')
+      }
+    }).catch(err => {
+      console.log(err)
+      this.selected = []
+      this.$message.error('接口异常')
+    })
     this.$axios.get(`/record?pid=${pid}`).then(res => {
       const result = res.data || {}
       if (result.code === 0) {
@@ -118,7 +144,8 @@ export default {
       this.$set(this.form, 'id', '')
       this.$set(this.form, 'name', '')
       this.$set(this.form, 'description', '')
-      this.$set(this.form, 'uids', '')
+      this.$set(this.form, 'mid', '')
+      this.$set(this.form, 'uri', '')
       this.dialogFormVisible = true
     },
     // 编辑
@@ -129,33 +156,27 @@ export default {
       this.$set(this.form, 'id', row.id)
       this.$set(this.form, 'name', row.name)
       this.$set(this.form, 'description', row.description)
-      this.$set(this.form, 'uids', row.uids)
+      this.$set(this.form, 'mid', row.mid)
+      this.$set(this.form, 'uri', row.uri)
       this.dialogFormVisible = true
-    },
-    // 进入模板页面
-    recordRow (index, row) {
-      this.$router.push({
-        name: 'record',
-        params: {
-          id: row.id
-        }
-      })
     },
     // 进入管理页面
     manageRow (index, row) {
       this.$router.push({
-        name: 'record',
+        name: 'record-data',
         params: {
-          id: row.id
+          id: this.pid,
+          rid: row.id,
+          mid: row.mid
         }
       })
     },
     // 删除
     deleteRow (index, row) {
-      this.$axios.get(`/project/delete?id=${row.id}`).then(res => {
+      this.$axios.get(`/record/delete?id=${row.id}`).then(res => {
         const result = res.data || {}
         if (result.code === 0) {
-          this.project.splice(index, 1)
+          this.record.splice(index, 1)
           this.$message({
             message: '删除成功',
             type: 'success'
@@ -181,10 +202,19 @@ export default {
     },
     // 新增提交
     submitAdd () {
-      this.$axios.post('/project/add', this.form).then(res => {
+      const form = this.form
+      const obj = {}
+      obj.pid = this.pid
+      obj.uid = this.uid
+      obj.name = form.name
+      obj.description = form.description
+      obj.mid = form.mid
+      obj.uri = form.uri
+
+      this.$axios.post('/record/add', obj).then(res => {
         const result = res.data || {}
         if (result.code === 0) {
-          this.project.push(result.data)
+          this.record.push(result.data)
           this.$message({
             message: '添加成功',
             type: 'success'
@@ -199,10 +229,20 @@ export default {
     },
     // 编辑提交
     submitEdit () {
-      this.$axios.post('/project/update', this.form).then(res => {
+      const form = this.form
+      const obj = {}
+      obj.id = form.id
+      obj.pid = this.pid
+      obj.uid = this.uid
+      obj.name = form.name
+      obj.description = form.description
+      obj.mid = form.mid
+      obj.uri = form.uri
+
+      this.$axios.post('/record/update', obj).then(res => {
         const result = res.data || {}
         if (result.code === 0) {
-          this.project.splice(this.activeIndex, 1, result.data)
+          this.record.splice(this.activeIndex, 1, result.data)
           this.$message({
             message: '编辑成功',
             type: 'success'
