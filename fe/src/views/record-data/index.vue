@@ -1,24 +1,13 @@
 <template>
   <el-container class="record">
     <el-header>
-      <h1>模板组合页</h1>
+      <h1>数据管理页</h1>
     </el-header>
     <el-main>
       <el-button class="record-add" @click="add" type="primary">新增</el-button>
-      <el-table class="record-table" :data="recordData" style="width: 1510px" height="700">
-        <el-table-column fixed="" prop="id" label="项目id" width="100"></el-table-column>
-        <el-table-column prop="name" label="项目名称" width="280"></el-table-column>
-        <el-table-column prop="description" label="项目描述" width="250"></el-table-column>
-        <el-table-column prop="mid" label="模板类型" width="250"></el-table-column>
-        <el-table-column prop="uri" label="访问路径" width="250"></el-table-column>
-        <el-table-column prop="uid" label="创建人员" width="200"></el-table-column>
-        <el-table-column label="更新时间" width="180">
-          <template slot-scope="scope">
-            <i class="el-icon-time"></i>
-            <span style="margin-left: 10px">{{ scope.row.utime }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" width="210">
+      <el-table class="record-table" :data="recordData" style="width: 1510px" height="620">
+        <el-table-column v-for="item in mould" :key="item.value" :prop="item.value" :label="item.value"></el-table-column>
+        <el-table-column v-show="mould.length" label="操作" width="150">
           <template slot-scope="scope">
             <el-button @click.native.prevent="eidtRow(scope.$index, scope.row)" size="mini">编辑</el-button>
             <el-button
@@ -35,23 +24,16 @@
       <el-form :model="form">
         <el-form-item v-for="item in mould" :key="item.name" :label="item.value" :label-width="formLabelWidth">
           <el-input v-if="item.type === 'text'" v-model="form[item.value]" autocomplete="off"></el-input>
-          <el-select v-if="item.type === 'selected'" v-model="form[[item.value]]" placeholder="请选择类型">
+          <el-input v-else-if="item.type === 'image'" v-model="form[item.value]" autocomplete="off"></el-input>
+          <el-select v-else-if="item.type === 'selected'" v-model="form[item.value]" placeholder="请选择类型">
             <el-option
-              v-for="innerItem in item.selected"
-              :key="innerItem.id"
-              :label="innerItem.name"
-              :value="innerItem.id"
+              placeholder="请选择"
+              v-for="innerItem in JSON.parse(item.selected || '[]')"
+              :key="innerItem.value"
+              :label="innerItem.value"
+              :value="innerItem.name"
             ></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="项目名称" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="项目描述" :label-width="formLabelWidth">
-          <el-input v-model="form.description" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="访问路径" :label-width="formLabelWidth">
-          <el-input v-model="form.uri" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -95,13 +77,7 @@ export default {
       recordData: [],
       mould: [],
       selected: [],
-      form: {
-        id: '',
-        name: '',
-        description: '',
-        mid: '',
-        uri: ''
-      },
+      form: {},
       activeIndex: '', // 现在操作的行数
       operateType: '' // 操作类型 add新增 edit修改
     }
@@ -117,7 +93,6 @@ export default {
       if (result.code === 0) {
         const item = (result.data && result.data[0]) || '[]'
         this.mould = JSON.parse(item.struct)
-        console.log(this.mould)
       } else {
         this.$message.error('数据异常')
       }
@@ -145,11 +120,7 @@ export default {
     add () {
       this.operateType = 'add'
       this.dialogTitle = '新增'
-      this.$set(this.form, 'id', '')
-      this.$set(this.form, 'name', '')
-      this.$set(this.form, 'description', '')
-      this.$set(this.form, 'mid', '')
-      this.$set(this.form, 'uri', '')
+      this.form = {}
       this.dialogFormVisible = true
     },
     // 编辑
@@ -157,21 +128,25 @@ export default {
       this.activeIndex = index
       this.operateType = 'edit'
       this.dialogTitle = '编辑'
-      this.$set(this.form, 'id', row.id)
-      this.$set(this.form, 'name', row.name)
-      this.$set(this.form, 'description', row.description)
-      this.$set(this.form, 'mid', row.mid)
-      this.$set(this.form, 'uri', row.uri)
+      this.form = Object.assign({}, {}, row)
       this.dialogFormVisible = true
     },
     // 删除
     deleteRow (index, row) {
-      this.$axios.get(`/record/delete?id=${row.id}`).then(res => {
+      const rdata = [...this.recordData]
+      rdata.splice(index, 1)
+      const obj = {}
+      obj.uid = this.uid
+      obj.id = this.rid
+      obj.struct = JSON.stringify(rdata)
+
+      this.$axios.post('/record/updateStruct', obj).then(res => {
         const result = res.data || {}
         if (result.code === 0) {
-          this.record.splice(index, 1)
+          const item = result.data || {}
+          this.recordData = JSON.parse(item.struct)
           this.$message({
-            message: '删除成功',
+            message: '编辑成功',
             type: 'success'
           })
         } else {
@@ -197,17 +172,15 @@ export default {
     submitAdd () {
       const form = this.form
       const obj = {}
-      obj.pid = this.pid
       obj.uid = this.uid
-      obj.name = form.name
-      obj.description = form.description
-      obj.mid = form.mid
-      obj.uri = form.uri
+      obj.id = this.rid
+      obj.struct = JSON.stringify([...this.recordData, form])
 
-      this.$axios.post('/record/add', obj).then(res => {
+      this.$axios.post('/record/updateStruct', obj).then(res => {
         const result = res.data || {}
         if (result.code === 0) {
-          this.record.push(result.data)
+          const item = result.data || {}
+          this.recordData = JSON.parse(item.struct)
           this.$message({
             message: '添加成功',
             type: 'success'
@@ -222,20 +195,18 @@ export default {
     },
     // 编辑提交
     submitEdit () {
-      const form = this.form
+      const rdata = this.recordData
+      rdata[this.activeIndex] = this.form
       const obj = {}
-      obj.id = form.id
-      obj.pid = this.pid
       obj.uid = this.uid
-      obj.name = form.name
-      obj.description = form.description
-      obj.mid = form.mid
-      obj.uri = form.uri
+      obj.id = this.rid
+      obj.struct = JSON.stringify(rdata)
 
-      this.$axios.post('/record/update', obj).then(res => {
+      this.$axios.post('/record/updateStruct', obj).then(res => {
         const result = res.data || {}
         if (result.code === 0) {
-          this.record.splice(this.activeIndex, 1, result.data)
+          const item = result.data || {}
+          this.recordData = JSON.parse(item.struct)
           this.$message({
             message: '编辑成功',
             type: 'success'

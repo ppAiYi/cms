@@ -5,12 +5,12 @@
     </el-header>
     <el-main>
       <el-button class="mould-add" @click="add" type="primary">新增</el-button>
-      <el-table class="mould-table" :data="mould" style="width: 1510px" height="700">
+      <el-table class="mould-table" :data="mould" style="width: 1510px" height="620">
         <el-table-column fixed prop="id" label="模板id" width="100"></el-table-column>
-        <el-table-column prop="name" label="模板名称" width="280"></el-table-column>
-        <el-table-column prop="description" label="模板描述" width="250"></el-table-column>
-        <el-table-column prop="struct" label="模板数据结构" width="400"></el-table-column>
-        <el-table-column label="更新时间" width="180">
+        <el-table-column prop="name" label="模板名称"></el-table-column>
+        <el-table-column prop="description" label="模板描述"></el-table-column>
+        <el-table-column prop="struct" label="模板数据结构"></el-table-column>
+        <el-table-column label="更新时间">
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
             <span style="margin-left: 10px">{{ scope.row.utime }}</span>

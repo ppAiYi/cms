@@ -76,12 +76,44 @@ router.post('/update', function(req, res) {
   })
 })
 
+router.post('/updateStruct', function(req, res) {
+  var reqData = req.body
+  var currentTime = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+  var params = {
+    struct: reqData.struct || '[]',
+    uid: reqData.uid,
+    utime: currentTime
+  }
+  dbRecord.recordUpdateStructById(reqData.id, params, function() {
+    dbRecord.recordSelectById(reqData.id, function(innerResult) {
+      var data = {
+        code: 0,
+        data: innerResult.length && innerResult[0],
+        msg: '请求成功'
+      }
+      res.json(data)
+    })
+  })
+})
+
 router.get('/delete', function(req, res) {
   var reqData = req.query
   dbRecord.recordDeleteById(reqData.id, function() {
     var data = {
       code: 0,
       data: {},
+      msg: '请求成功'
+    }
+    res.json(data)
+  })
+})
+
+router.get('/uri', function(req, res) {
+  var reqData = req.query
+  dbRecord.recordSelectByUrl(reqData.uri, function(result) {
+    var data = {
+      code: 0,
+      data: result,
       msg: '请求成功'
     }
     res.json(data)

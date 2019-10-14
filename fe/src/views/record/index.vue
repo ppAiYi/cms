@@ -1,18 +1,18 @@
 <template>
   <el-container class="record">
     <el-header>
-      <h1>模板组合页</h1>
+      <h1>项目 & 模板组合页</h1>
     </el-header>
     <el-main>
       <el-button class="record-add" @click="add" type="primary">新增</el-button>
-      <el-table class="record-table" :data="record" style="width: 1510px" height="700">
+      <el-table class="record-table" :data="record" style="width: 1510px" height="620">
         <el-table-column fixed prop="id" label="项目id" width="100"></el-table-column>
-        <el-table-column prop="name" label="项目名称" width="280"></el-table-column>
-        <el-table-column prop="description" label="项目描述" width="250"></el-table-column>
-        <el-table-column prop="mid" label="模板类型" width="250"></el-table-column>
-        <el-table-column prop="uri" label="访问路径" width="250"></el-table-column>
-        <el-table-column prop="uid" label="创建人员" width="200"></el-table-column>
-        <el-table-column label="更新时间" width="180">
+        <el-table-column prop="name" label="项目名称"></el-table-column>
+        <el-table-column prop="description" label="项目描述"></el-table-column>
+        <el-table-column prop="mid" label="模板类型"></el-table-column>
+        <el-table-column prop="uri" label="访问路径"></el-table-column>
+        <el-table-column prop="uid" label="创建人员"></el-table-column>
+        <el-table-column label="更新时间">
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
             <span style="margin-left: 10px">{{ scope.row.utime }}</span>

@@ -5,12 +5,12 @@
     </el-header>
     <el-main>
       <el-button class="project-add" @click="add" type="primary">新增</el-button>
-      <el-table class="project-table" :data="project" style="width: 1510px" height="700">
+      <el-table class="project-table" :data="project" style="width: 1510px" height="620">
         <el-table-column fixed prop="id" label="项目id" width="100"></el-table-column>
-        <el-table-column prop="name" label="项目名称" width="280"></el-table-column>
-        <el-table-column prop="description" label="项目描述" width="250"></el-table-column>
-        <el-table-column prop="uids" label="参与人员" width="200"></el-table-column>
-        <el-table-column label="更新时间" width="180">
+        <el-table-column prop="name" label="项目名称"></el-table-column>
+        <el-table-column prop="description" label="项目描述"></el-table-column>
+        <el-table-column prop="uids" label="参与人员"></el-table-column>
+        <el-table-column label="更新时间">
           <template slot-scope="scope">
             <i class="el-icon-time"></i>
             <span style="margin-left: 10px">{{ scope.row.utime }}</span>
@@ -19,7 +19,11 @@
         <el-table-column fixed="right" label="操作" width="300">
           <template slot-scope="scope">
             <el-button @click.native.prevent="eidtRow(scope.$index, scope.row)" size="mini">编辑</el-button>
-            <el-button @click.native.prevent="mouldRow(scope.$index, scope.row)" size="mini">模板</el-button>
+            <el-button
+              @click.native.prevent="mouldRow(scope.$index, scope.row)"
+              size="mini"
+              type="info"
+            >模板</el-button>
             <el-button
               @click.native.prevent="manageRow(scope.$index, scope.row)"
               size="mini"
