@@ -6,32 +6,34 @@ CREATE TABLE `project` (
   `ctime` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
   `utime` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `mould` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `pid` int(11) NOT NULL,
-  `desc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `struct` json NOT NULL,
   `ctime` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
   `utime` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `record` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '',
   `uri` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `pid` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
+  `mid` int(11) NOT NULL,
   `struct` json NOT NULL,
   `ctime` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
   `utime` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `user` (
@@ -41,7 +43,7 @@ CREATE TABLE `user` (
   `role` int(11) NOT NULL,
   `ctime` datetime NOT NULL DEFAULT '0000-01-01 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 
 
